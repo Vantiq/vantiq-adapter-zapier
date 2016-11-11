@@ -1,0 +1,8 @@
+{ 
+    "name": "Zapier",
+    "type": "REMOTE",
+    "direction": "BOTH",
+    "config": {
+       "uri": "https://zapier.com/"
+    }
+}

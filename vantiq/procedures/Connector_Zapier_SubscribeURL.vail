@@ -1,0 +1,18 @@
+PROCEDURE Connector_Zapier_SubscribeURL(target_url, action)
+
+var newConfig = {
+    user:       username(),
+    action:     action,
+    target_url: target_url
+}
+
+//
+// Store Zapier Target URL for the user and associated action.  If there was one already,
+// then replace it.
+//
+var config = SELECT ONE * FROM Connector_Zapier_Config WHERE user == username() AND action == action
+if(config) {
+    UPDATE Connector_Zapier_Config(newConfig) WHERE user == username() AND action == action
+} else {
+    INSERT Connector_Zapier_Config(newConfig)
+}

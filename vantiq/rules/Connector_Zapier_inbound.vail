@@ -1,0 +1,8 @@
+RULE Connector_Zapier_Inbound
+
+WHEN PUBLISH OCCURS ON "/system/connector/Zapier/inbound" AS m
+
+var dataType = m.newValue.type
+var obj = parse(m.newValue.content)
+
+Adapter_Publish(dataType, obj)

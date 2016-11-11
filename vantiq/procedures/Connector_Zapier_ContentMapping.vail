@@ -1,0 +1,65 @@
+PROCEDURE Connector_Zapier_ContentMapping(dataTypeName, prefix) 
+
+var result = []
+
+//
+// Mapping of property type to separator
+// 
+var SEPARATORS = {
+    "Boolean":  "[B[",
+    "DateTime": "[D[",
+    "Integer":  "[N[",
+    "Real":     "[N[",
+    "Decimal":  "[N[",
+    "Currency": "[N[",
+    "GeoJSON":  "[O[",
+    "Object":   "[O[",
+    "String":   "[S["
+}
+
+//
+// Look up the Vantiq data type
+//
+var typeDef = SELECT ONE * FROM ArsType WHERE name == dataTypeName
+if(typeDef != null) {
+
+    var props     = typeDef.properties
+    var propNames = props.keySet()
+
+    //
+    // Loop through all properties creating a mapping
+    //
+    if(prefix == null) {
+        prefix = ""
+    }
+    var lines = []
+    for(propName in propNames) {
+        var prop = props[propName]
+        if(!prop.system) {
+            var line = "    \"" + propName + "\": "
+        
+            var sep = SEPARATORS[prop.type]
+            if(sep != null) {
+                line += sep + "{{" + prefix + propName + "}}]]"
+            } else {
+                    line += "{{" + prefix + propName + "}}"
+            }
+            lines.push(line)
+        }
+    }
+
+    var mapping = "{"
+    mapping += lines.join(",")
+    mapping += "}"
+
+    result = [{
+        name: dataTypeName + " mapping",
+        type: dataTypeName,
+        mapping: mapping
+    }]
+
+} else {
+    result = []
+}
+
+return result
