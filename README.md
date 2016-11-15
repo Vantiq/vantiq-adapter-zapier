@@ -24,7 +24,11 @@ The _Vantiq App_ is available by invitation from Vantiq at [Zapier](https://zapi
 
 ### Connector
 
-The Zapier connector can be imported into a Vantiq namespace through the CLI:
+The Zapier connector can be imported into a Vantiq namespace using the [Vantiq connector common](https://github.com/Vantiq/vantiq-connector-common) `vantiq-import-adapter.sh` script:
+
+    % vantiq-import-adapter.sh https://github.com/Vantiq/vantiq-connector-Zapier.git
+
+Or directly using the CLI:
 
     % git clone https://github.com/Vantiq/vantiq-connector-Zapier.git
     % cd vantiq-connector-Zapier/vantiq
@@ -32,23 +36,21 @@ The Zapier connector can be imported into a Vantiq namespace through the CLI:
 
 where `<profile>` provides the credentials for the Vantiq CLI.
 
-## Vantiq Zapier App
+## Using the Vantiq Zapier App
 
 To create an integration between Vantiq and Zapier, the Vantiq Zapier app must be used.  The
 app supports the *Publish Data* action that allows data from external systems to trigger
 data to be pushed into Vantiq.
 
-### *Publish Data* Action 
-
-When creating a Zap that uses the *Publish Data* action, the following steps are required:
-
-#### Select Vantiq Account
-
-To connect to Vantiq, the user must provide:
+For all triggers and actions, to connect to Vantiq, the user must provide:
 
 * `Vantiq System URL`: The system to connect to.  Typically, this will be the production Vantiq server.
 * `Username`: The username used to authenticate into the specified Vantiq system.
 * `Password`: The password used to authenticate into the specified Vantiq system.
+
+### *Publish Data* Action 
+
+When creating a Zap that uses the *Publish Data* action, the following steps are required:
 
 #### Action Template
 
@@ -69,9 +71,26 @@ drop-down, the content can be dynamically loaded based on the Vantiq data type a
 If that doesn't work for some reason, the mapping can be provided explicitly.
 * `Topic`: The topic should be left as a the default (`/system/connector/Zapier/inbound`).
 
-## Content Mappings
+#### Content Mappings
 
 Every type of data that is integrated through Zapier requires a mapping that is populated
 in the `content` field when creating a Zap.  By default, the content mappings can be looked
 up during the setup of the Zap based on the Vantiq Data Type selected.  This allows changes
 to the Vantiq Data Type to be automatically reflected through Zapier.
+
+### *Receive Message* Trigger
+
+The *Receive Message* trigger allows Vantiq to push messages from Vantiq to a third party 
+system through Zapier.
+
+#### Set up Vantiq Message
+
+The user must specify which action to listen to using the `Action` field.  The actions are
+provided by calling to Vantiq and looking for all procedures that begin with `Control_`.  The
+fields that are returned should match the fields needed for subsequent actions.  For example,
+the `Twitter_PostTweet` action has fields that match those in the *Twitter* app *Create Tweet* 
+action.
+
+# Copyright and License
+
+Copyright &copy; 2016 Vantiq, Inc.  Code released under the [MIT License](./LICENSE)

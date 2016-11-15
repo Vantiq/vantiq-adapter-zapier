@@ -1,4 +1,15 @@
 var Zap = {
+
+    //
+    // Only include the access token in the result.
+    //
+    authenticate_post_poll: function(bundle) {
+        console.log("authenticate_post_poll: " + JSON.stringify(bundle, null, 2));
+        
+        var resp = JSON.parse(bundle.response.content);
+        return { accessToken: resp.accessToken };
+    },
+
     //
     // Include the "action" that is being requested from Vantiq.
     //

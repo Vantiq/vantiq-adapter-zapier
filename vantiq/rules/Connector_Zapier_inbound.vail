@@ -5,4 +5,4 @@ WHEN PUBLISH OCCURS ON "/system/connector/Zapier/inbound" AS m
 var dataType = m.newValue.type
 var obj = parse(m.newValue.content)
 
-Adapter_Publish(dataType, obj)
+Connector_PublishData(dataType, obj)

@@ -8,7 +8,7 @@ WHEN PUBLISH OCCURS ON "/system/connector/Zapier/outbound" AS m
 //
 // Note that Zapier always expects the payload to be an array.
 //
-var action  = m.newValue.action
+var action  = m.newValue.system + "_" + m.newValue.action
 var payload = m.newValue.payload
 
 //
@@ -18,12 +18,13 @@ var zapConfig = SELECT ONE * FROM Connector_Zapier_Config WHERE user == username
 if(zapConfig) {
 
     //
-    // The Base URI in the Zapier source is "https://zapier.com/" so
-    // we need to strip out this from the target_url to create the
-    // path.
+    // The Base URI in the Zapier source is "https://zapier.com/" (or similar) so
+    // we need to strip out this from the target_url to create the path.  Note
+    // that it may be "https://hooks.zapier.com", but the path still works
+    // with "https://zapier.com".
     //
     var publishConfig = {
-        path: zapConfig.target_url.substring(length("https://zapier.com/"))
+        path: zapConfig.target_url.replace("^https?://[^/]*/", "/")
     }
 
     PUBLISH { body: payload } TO SOURCE Zapier USING publishConfig
