@@ -1,6 +1,9 @@
 RULE Connector_Zapier_Outbound
 
-WHEN PUBLISH OCCURS ON "/system/connector/Zapier/outbound" AS m
+//
+// Listens for any control action messages
+//
+WHEN PUBLISH OCCURS ON "/system/adapter/outbound/*" AS m
 
 //
 // The action determines which target URL to use
@@ -12,7 +15,9 @@ var action  = m.newValue.system + "_" + m.newValue.action
 var payload = m.newValue.payload
 
 //
-// Lookup Zapier target URL used to post messages
+// Look to see if the action has been registered.  If so, lookup the 
+// Zapier target URL used to post messages.  If none registered, then
+// ignore the message.
 //
 var zapConfig = SELECT ONE * FROM Connector_Zapier_Config WHERE user == username() AND action == action
 if(zapConfig) {
@@ -29,7 +34,4 @@ if(zapConfig) {
 
     PUBLISH { body: payload } TO SOURCE Zapier USING publishConfig
 
-} else {
-    exception("io.vantiq.system.adapter.zapier.missing.target_url",
-              "No target URL registered for user " + username())
 }
